@@ -1,7 +1,6 @@
 package com.example.akalo_chomsky.models;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Automaton {
@@ -10,8 +9,10 @@ public class Automaton {
     static {
         productions.put("GV", "TD V I VA"); // Variable
         productions.put("GCT", "CN PA CD PC MY C MN"); // Conditional
-        productions.put("TD", "(Ent|Cdn|Bool|Dcm)");
+        productions.put("GF", "TD V ME PR MA MY C RT MN"); // Functions
+        productions.put("TD", "(Fnc|Ent|Cdn|Bool|Dcm)");
         productions.put("V", "[a-zA-Z]+");
+        productions.put("PR", "([a-zA-Z]|^$)+");
         productions.put("D", "[0-9]");
         productions.put("I", "=");
         productions.put("CN", "if");
@@ -20,8 +21,12 @@ public class Automaton {
         productions.put("CD", "^[a-zA-Z0-9_]+(>=|<=|==|!=|<|>)[a-zA-Z0-9_]+$");
         productions.put("S", "(>=|<=|==|!=|<|>)");
         productions.put("MY", "=>");
+        productions.put("MA", "^\\>$");
+        productions.put("ME", "^\\<$");
         productions.put("MN", "<=");
         productions.put("C", "\\w+");
+        productions.put("RT", "RTN V");
+        productions.put("RTN", "return");
         productions.put("","");
     }
 
@@ -59,7 +64,6 @@ public class Automaton {
         Stack<String> stack = new Stack<>();
         Stack<String> states = new Stack<>();
 
-        stack.push("$");
         stack.push(rule);
         states.push(String.valueOf(stack));
         int i = 0;
@@ -67,13 +71,13 @@ public class Automaton {
         String X;
         String [] words = text.split("\\s+");
 
-        while (true) {
+        while (!stack.isEmpty()) {
             X = stack.peek();
 
             if (isTerminal(X)) { // X is terminal
 
                 if (X != null && Pattern.matches(X, String.valueOf(words[i]))) {
-                    if (X.equals("(Ent|Cdn|Bool|Dcm)")) dataType = words[i];
+                    if (X.equals("(Fnc|Ent|Cdn|Bool|Dcm)")) dataType = words[i];
                     stack.pop();
                     states.push(String.valueOf(stack));
                     i++;
@@ -98,10 +102,7 @@ public class Automaton {
                     return new Validate(false, states);
                 }
             }
-
-            if (X.equals("$")) {
-                return new Validate(true, states);
-            }
         }
+        return new Validate(true, states);
     }
 }
