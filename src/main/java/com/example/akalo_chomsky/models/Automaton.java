@@ -93,6 +93,7 @@ public class Automaton {
                     if (X.equals("VA") && isValidType(words[i], dataType)) {
                         stack.pop();
                         states.push(String.valueOf(stack));
+                        if (words.length-1 > i) return new Validate(false, states);
                         return new Validate(true, states);
                     }
                     return new Validate(false, states);
@@ -111,6 +112,7 @@ public class Automaton {
                 }
             }
         }
+        if (words.length > i) return new Validate(false, states);
         return new Validate(true, states);
     }
 }
