@@ -59,6 +59,8 @@ public class HelloController {
 
     @FXML
     void validateCicle(MouseEvent event) {
+        String resultText = "";
+
         Validate result = automaton.evaluate(cicleTextArea.getText(), "GC");
         setIsValid(ciclesLabel, result.isValid());
         stackState.setText(result.getCases().toString());
@@ -66,26 +68,33 @@ public class HelloController {
 
     @FXML
     void validateCondition(MouseEvent event) {
+        String resultText = "";
         Validate result = automaton.evaluate(conditionTextArea.getText(), "GCT");
         setIsValid(conditionsLabel, result.isValid());
-        stackState.setText(result.getCases().toString());
+        for (String state : result.getCases()) {
+            resultText += state + "\n";
+        }
+        stackState.setText(resultText);
     }
 
     @FXML
     void validateFunction(MouseEvent event) {
+        String resultText = "";
         Validate result = automaton.evaluate(functionTextArea.getText(), "GF");
         setIsValid(functionsLabel, result.isValid());
-        stackState.setText(result.getCases().toString());
+        for (String state : result.getCases()) {
+            resultText += state + "\n";
+        }
+        stackState.setText(resultText);
     }
 
     @FXML
     void validateVariable(MouseEvent event) {
         String resultText = "";
-        System.out.println(variableTextArea.getText());
         Validate result = automaton.evaluate(variableTextArea.getText(), "GV");
         setIsValid(variablesLabel, result.isValid());
-        for (Stack<String> pila : result.getCases()) {
-            resultText += pila + "\n";
+        for (String state : result.getCases()) {
+            resultText += state + "\n";
         }
         stackState.setText(resultText);
     }

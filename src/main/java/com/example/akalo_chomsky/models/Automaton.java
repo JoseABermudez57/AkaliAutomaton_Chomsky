@@ -1,29 +1,28 @@
 package com.example.akalo_chomsky.models;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Automaton {
     private static final HashMap<String, String> productions = new HashMap<>();
 
     static {
-        productions.put("GV", "TD V I VA | TD V");
+        productions.put("GV", "TD V I VA"); // Variable
+        productions.put("GCT", "CN PA CD PC MY C MN"); // Conditional
         productions.put("TD", "(Ent|Cdn|Bool|Dcm)");
-        productions.put("V", "L RL");
-        productions.put("L", "[a-zA-Z]+");
-        productions.put("RL", "L RL | D RDL");
-        productions.put("RDL", "D RD RL");
+        productions.put("V", "[a-zA-Z]+");
         productions.put("D", "[0-9]");
-        productions.put("RD", "D RD");
         productions.put("I", "=");
+        productions.put("CN", "if");
+        productions.put("PA", "^\\($");
+        productions.put("PC", "^\\)$");
+        productions.put("CD", "^[a-zA-Z0-9_]+(>=|<=|==|!=|<|>)[a-zA-Z0-9_]+$");
+        productions.put("S", "(>=|<=|==|!=|<|>)");
+        productions.put("MY", "=>");
+        productions.put("MN", "<=");
+        productions.put("C", "\\w+");
         productions.put("","");
-        productions.put("VCAD", "V CO");
-        productions.put("VDEC", "RD RVDEC");
-        productions.put("RVDEC", "P DVDEC");
-        productions.put("DVDEC", "D RD");
-        productions.put("CO", "\"");
-        productions.put("P", "\\.");
-        productions.put("B", "(true|false)");
     }
 
     private static String getProduction(String symbol) {
@@ -34,70 +33,75 @@ public class Automaton {
         return !productions.containsKey(symbol);
     }
 
+    private boolean isValidType(String word, String dataType) {
+        switch (dataType) {
+            case "Ent" -> {
+                if (Pattern.matches("\\d+", word)) return true;
+            }
+            case "Cdn" -> {
+                if (Pattern.matches("\".*\"", word)) return true;
+            }
+            case "Dec" -> {
+                if (Pattern.matches("\\d+\\.\\d+", word)) return true;
+            }
+            case "Bool" -> {
+                if (Pattern.matches("(true|false)", word)) return true;
+            }
+            default -> {
+                return false;
+            }
+        }
+        return false;
+    }
+
     public Validate evaluate (String text, String rule) {
-        String X;
+        String dataType = "";
+        Stack<String> stack = new Stack<>();
+        Stack<String> states = new Stack<>();
+
+        stack.push("$");
+        stack.push(rule);
+        states.push(String.valueOf(stack));
         int i = 0;
-        Stack<String> rulesStack = new Stack<>();
-        List<Stack<String>> states = new ArrayList<>();
 
-        rulesStack.push("$");
-        //stack.push(rule); Decide which standard you want to validate
-        rulesStack.push(rule);
-        states.add(rulesStack);
-        // Clean up text and remove spaces
-        String[] rules = text.trim().split("\\s+");
+        String X;
+        String [] words = text.split("\\s+");
 
-        while (!rulesStack.isEmpty()) {
-            X = rulesStack.peek();
+        while (true) {
+            X = stack.peek();
 
-            if (isTerminal(X)){ // X is terminal
-                // "TD V I VA | TD V"
+            if (isTerminal(X)) { // X is terminal
 
-                // Identify if separated by "|"
-                if (Pattern.matches(X, ".*\\|.*\n")){
-                    int k = 0;
-                    String[] wordWithSeparations = rules[i].split("\\|"); // Separate by each "|"
-                    for (String separation: wordWithSeparations) {
-                        // Intentar cada camino por ejemplo "TD V I VA"
-                        String[] words = separation.trim().split("\\s+");
-                        if (Pattern.matches(X, words[k])) { // Si encuentra una coincidencia
-                            rulesStack.pop();
-                            states.add(rulesStack);
-                            break;
-                        }
-                        k++;
+                if (X != null && Pattern.matches(X, String.valueOf(words[i]))) {
+                    if (X.equals("(Ent|Cdn|Bool|Dcm)")) dataType = words[i];
+                    stack.pop();
+                    states.push(String.valueOf(stack));
+                    i++;
+                } else {
+                    if (X.equals("VA") && isValidType(words[i], dataType)) {
+                        stack.pop();
+                        states.push(String.valueOf(stack));
+                        return new Validate(true, states);
                     }
                     return new Validate(false, states);
-                } else { // If not, separate by chars
-                    char[] wordWithoutSeparations = rules[i].toCharArray();
-                    for (char separation: wordWithoutSeparations) {
-                        if (Pattern.matches(X, String.valueOf(separation))) {
-                            rulesStack.pop();
-                            states.add(rulesStack);
-                        } else {
-                            return new Validate(false, states);
-                        }
-                    }
                 }
-            } else { // X isn't terminal
-                if (!getProduction(X).isEmpty()){
-                    rulesStack.pop();
+            } else { // X is not terminal
+                if (getProduction(X) != null) {
+                    stack.pop();
                     String production = getProduction(X);
                     String[] symbols = production.split("\\s+");
-                    if (Pattern.matches("\\|", production)) {
-                        rulesStack.push(production);
-                    } else {
-                        for (int j = symbols.length - 1; j >= 0; j--){
-                            rulesStack.push(symbols[j]);
-                        }
+                    for (int j = symbols.length - 1; j >= 0; j--) {
+                        stack.push(symbols[j]);
                     }
-                    states.add(rulesStack);
+                    states.push(String.valueOf(stack));
                 } else {
                     return new Validate(false, states);
                 }
             }
-        }
 
-        return new Validate(true, states);
+            if (X.equals("$")) {
+                return new Validate(true, states);
+            }
+        }
     }
 }
