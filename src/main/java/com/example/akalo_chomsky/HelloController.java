@@ -58,12 +58,14 @@ public class HelloController {
     }
 
     @FXML
-    void validateCicle(MouseEvent event) {
+    void validateCycle(MouseEvent event) {
         String resultText = "";
-
         Validate result = automaton.evaluate(cicleTextArea.getText(), "GC");
         setIsValid(ciclesLabel, result.isValid());
-        stackState.setText(result.getCases().toString());
+        for (String state : result.getCases()) {
+            resultText += state + "\n";
+        }
+        stackState.setText(resultText);
     }
 
     @FXML

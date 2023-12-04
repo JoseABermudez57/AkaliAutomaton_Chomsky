@@ -98,7 +98,7 @@
       <Group layoutX="37.0" layoutY="242.0">
          <children>
             <TextField fx:id="cicleTextArea" layoutY="15.0" prefHeight="31.0" prefWidth="256.0" promptText="Validar cilos" />
-            <Button layoutX="282.0" layoutY="15.0" mnemonicParsing="false" onMouseClicked="#validateCicle" prefHeight="31.0" prefWidth="79.0" style="-fx-background-color: #eee9e5; -fx-background-radius: 20;" text="Validar">
+            <Button layoutX="282.0" layoutY="15.0" mnemonicParsing="false" onMouseClicked="#validateCycle" prefHeight="31.0" prefWidth="79.0" style="-fx-background-color: #eee9e5; -fx-background-radius: 20;" text="Validar">
                <effect>
                   <DropShadow height="35.66" radius="16.595" width="32.72">
                      <color>
@@ -115,7 +115,7 @@
             </Button>
          </children>
       </Group>
-      <TextArea fx:id="stackState" layoutX="37.0" layoutY="304.0" mouseTransparent="true" prefHeight="280.0" prefWidth="405.0" promptText="Estado de la pila" scrollTop="1.0" />
+      <TextArea fx:id="stackState" layoutX="37.0" layoutY="311.0" mouseTransparent="true" prefHeight="280.0" prefWidth="405.0" promptText="Estado de la pila" scrollTop="1.0" />
       <Button layoutX="474.0" layoutY="346.0" mnemonicParsing="false" onMouseClicked="#deleteAllText" prefHeight="31.0" prefWidth="79.0" style="-fx-background-color: #eee9e5; -fx-background-radius: 20;" text="Reinciar">
          <effect>
             <DropShadow height="35.66" radius="16.595" width="32.72">

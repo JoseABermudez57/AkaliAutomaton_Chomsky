@@ -10,15 +10,23 @@ public class Automaton {
         productions.put("GV", "TD V I VA"); // Variable
         productions.put("GCT", "CN PA CD PC MY C MN"); // Conditional
         productions.put("GF", "TD V ME PR MA MY C RT MN"); // Functions
+        productions.put("GC", "F PA CDF PC MY C MN"); // Cycle
         productions.put("TD", "(Fnc|Ent|Cdn|Bool|Dcm)");
         productions.put("V", "[a-zA-Z]+");
         productions.put("PR", "([a-zA-Z]|^$)+");
         productions.put("D", "[0-9]");
         productions.put("I", "=");
         productions.put("CN", "if");
+        productions.put("F", "for");
         productions.put("PA", "^\\($");
         productions.put("PC", "^\\)$");
         productions.put("CD", "^[a-zA-Z0-9_]+(>=|<=|==|!=|<|>)[a-zA-Z0-9_]+$");
+        productions.put("CDF", "D SS");
+        productions.put("SS", "SE TC");
+        productions.put("SE", "^\\|$");
+        productions.put("TC", "D UC");
+        productions.put("UC", "SE O");
+        productions.put("O", "^[+-]$");
         productions.put("S", "(>=|<=|==|!=|<|>)");
         productions.put("MY", "=>");
         productions.put("MA", "^\\>$");
